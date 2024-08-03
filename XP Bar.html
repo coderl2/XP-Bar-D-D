@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XP Progress Bar</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+    }
+    .container {
+        width: 80%;
+        max-width: 600px;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    .progress-bar-container {
+        width: 100%;
+        background-color: #e0e0e0;
+        border-radius: 25px;
+        overflow: hidden;
+    }
+    .progress-bar {
+        height: 30px;
+        width: 0;
+        background-color: #76c7c0;
+        transition: width 0.3s ease;
+    }
+    .input-container {
+        margin-top: 20px;
+    }
+    input[type="number"] {
+        width: 80px;
+        padding: 5px;
+        margin-right: 10px;
+    }
+    button {
+        padding: 5px 10px;
+        background-color: #76c7c0;
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #5aa3a0;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>XP Progress Bar</h1>
+    <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <div class="input-container">
+        <input type="number" id="xp-input" placeholder="Enter XP" min="0">
+        <button onclick="addXP()">Add XP</button>
+    </div>
+    <p id="xp-display">Level: 1 | 0 XP</p>
+</div>
+
+<script>
+    const xpThresholds = [
+        0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000,
+        100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000, 400000
+    ];
+
+    let currentLevel = 1;
+    let currentXP = 0;
+
+    function updateProgressBar() {
+        const progressBar = document.getElementById('progress-bar');
+        const xpDisplay = document.getElementById('xp-display');
+
+        if (currentLevel > 20) {
+            xpDisplay.textContent = `Max Level Reached: 20 | ${currentXP} XP`;
+            progressBar.style.width = '100%';
+            return;
+        }
+
+        const nextLevelXP = xpThresholds[currentLevel];
+        const previousLevelXP = xpThresholds[currentLevel - 1];
+        const progress = ((currentXP - previousLevelXP) / (nextLevelXP - previousLevelXP)) * 100;
+
+        progressBar.style.width = `${progress}%`;
+        xpDisplay.textContent = `Level: ${currentLevel} | ${currentXP} XP`;
+
+        if (currentXP >= nextLevelXP && currentLevel < 20) {
+            currentLevel++;
+            updateProgressBar();
+        }
+    }
+
+    function addXP() {
+        const xpInput = document.getElementById('xp-input').value;
+        const xpToAdd = parseInt(xpInput, 10);
+
+        if (!isNaN(xpToAdd) && xpToAdd > 0) {
+            currentXP += xpToAdd;
+            updateProgressBar();
+        }
+    }
+
+    updateProgressBar();
+</script>
+</body>
+</html>
